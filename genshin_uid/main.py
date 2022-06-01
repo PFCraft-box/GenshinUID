@@ -1,5 +1,6 @@
 import base64
 from typing import Union
+from pathlib import Path
 
 from nonebot import (get_bot, get_driver, on_command, on_regex, on_startswith,
                      require)
@@ -13,6 +14,10 @@ from nonebot.permission import SUPERUSER
 # from .get_data import *
 from .get_image import *
 from .get_mihoyo_bbs_data import *
+from enkaToData.enkaToData import *
+from enkaToData.drawCharCard import *
+
+R_PATH = Path(__file__).parents[0]
 
 config = get_driver().config
 priority = config.genshinuid_priority if config.genshinuid_priority else 2
@@ -48,6 +53,8 @@ get_help = on_command('gs帮助', priority=priority)
 
 open_switch = on_startswith('gs开启', priority=priority)
 close_switch = on_startswith('gs关闭', priority=priority)
+
+refresh = on_startswith('强制刷新', priority=priority)
 
 link_mys = on_startswith('绑定mys', priority=priority)
 link_uid = on_startswith('绑定uid', priority=priority)
@@ -115,6 +122,59 @@ class ImageAndAt:
             return self.at[0]
         except IndexError:
             return None
+
+@scheduler.scheduled_job('cron', hour='4')
+async def daily_refresh_charData():
+    await refresh_charData()
+
+async def refresh_charData():
+    conn = sqlite3.connect('ID_DATA.db')
+    c = conn.cursor()
+    cursor = c.execute('SELECT UID  FROM UIDDATA WHERE UID IS NOT NULL')
+    c_data = cursor.fetchall()
+    t = 0
+    for row in c_data:
+        uid = row[0]
+        try:
+            im = await enkaToData(uid)
+            logger.info(im)
+            t += 1
+            await asyncio.sleep(18 + random.randint(2, 6))
+        except:
+            logger.exception(f'{uid}刷新失败！')
+            logger.error(f'{uid}刷新失败！本次自动刷新结束！')
+            return f'执行失败从{uid}！共刷新{str(t)}个角色！'
+    else:
+        return f'执行成功！共刷新{str(t)}个角色！'
+    
+@refresh.handle()
+async def send_card_info(bot: Bot, event: MessageEvent):
+    message = str(event.get_message()).strip().replace(' ', '').replace(
+            '强制刷新', '')
+    uid = re.findall(r'\d+', message)  # str
+    m = ''.join(re.findall('[\u4e00-\u9fa5]', message))
+    qid = int(event.sender.user_id)
+    try:
+        if len(uid) >= 1:
+            uid = uid[0]
+        else:
+            if m == '全部数据':
+                if qid in superusers:
+                    await refresh.send('开始刷新全部数据，这可能需要相当长的一段时间！！')
+                    im = await refresh_charData()
+                    await refresh.send(str(im))
+                    return
+                else:
+                    return
+            else:
+                uid = await select_db(qid, mode='uid')
+                uid = uid[0]
+        im = await enkaToData(uid)
+        await refresh.send(str(im))
+        logger.info(f'UID{uid}获取角色数据成功！')
+    except:
+        await refresh.send('获取角色数据失败！')
+        logger.exception('获取角色数据失败！')
 
 @schedule.scheduled_job('cron', hour='2')
 async def draw_event():
@@ -1138,7 +1198,44 @@ async def get_info(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent
                         '获取失败，有可能是数据状态有问题,\n{}\n请检查后台输出。'.format(e))
                     logger.exception('数据获取失败（数据状态问题）')
             else:
-                pass
+                try:
+                    if at:
+                        qid = at
+                    else:
+                        qid = int(event.sender.user_id)
+                    uid = await select_db(qid, mode='uid')
+                    uid = uid[0]
+                    if m == '展柜角色':
+                        uid_fold = R_PATH / 'enkaToData' / 'player' / str(uid)
+                        char_file_list = uid_fold.glob('*')
+                        char_list = []
+                        for i in char_file_list:
+                            if '\u4e00' <= i[0] <= '\u9fff':
+                                char_list.append(i.split('.')[0])
+                        char_list_str = ','.join(char_list)
+                        await search.send(f'UID{uid}当前缓存角色:{char_list_str}', at_sender=True)
+                    else:
+                        char_name = m
+                        with open(os.path.join(INDEX_PATH, 'char_alias.json'),
+                                'r',
+                                encoding='utf8') as fp:
+                            char_data = json.load(fp)
+                        for i in char_data:
+                            if char_name in i:
+                                char_name = i
+                            else:
+                                for k in char_data[i]:
+                                    if char_name in k:
+                                        char_name = i
+
+                        with open(R_PATH / 'enkaToData' / 'player' / str(uid) / f'{char_name}.json',
+                                'r',
+                                encoding='utf8') as fp:
+                            raw_data = json.load(fp)
+                        im = await draw_char_card(raw_data, image)
+                        await search.send(MessageSegment.image(im), at_sender=True)
+                except Exception:
+                    logger.exception('获取信息失败,你可以使用强制刷新命令进行刷新。')
         else:
             await search.send('未找到绑定记录！')
     except Exception as e:
