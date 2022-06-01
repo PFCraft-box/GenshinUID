@@ -14,8 +14,8 @@ from nonebot.permission import SUPERUSER
 # from .get_data import *
 from .get_image import *
 from .get_mihoyo_bbs_data import *
-from enkaToData.enkaToData import *
-from enkaToData.drawCharCard import *
+from .enkaToData.enkaToData import *
+from .enkaToData.drawCharCard import *
 
 R_PATH = Path(__file__).parents[0]
 
