@@ -123,7 +123,7 @@ class ImageAndAt:
         except IndexError:
             return None
 
-@scheduler.scheduled_job('cron', hour='4')
+@schedule.scheduled_job('cron', hour='4')
 async def daily_refresh_charData():
     await refresh_charData()
 
