@@ -14,8 +14,8 @@ from nonebot.permission import SUPERUSER
 # from .get_data import *
 from .get_image import *
 from .get_mihoyo_bbs_data import *
-from .enkaToData.enkaToData import *
-from .enkaToData.drawCharCard import *
+from enkaToData.enkaToData import *
+from enkaToData.drawCharCard import *
 
 R_PATH = Path(__file__).parents[0]
 
@@ -1210,8 +1210,9 @@ async def get_info(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent
                         char_file_list = uid_fold.glob('*')
                         char_list = []
                         for i in char_file_list:
-                            if '\u4e00' <= i[0] <= '\u9fff':
-                                char_list.append(i.split('.')[0])
+                            file_name = i.name
+                            if '\u4e00' <= file_name[0] <= '\u9fff':
+                                char_list.append(file_name.split('.')[0])
                         char_list_str = ','.join(char_list)
                         await search.send(f'UID{uid}当前缓存角色:{char_list_str}', at_sender=True)
                     else:
