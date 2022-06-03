@@ -51,7 +51,8 @@ async def draw_char_card(raw_data: dict, charUrl: str = None) -> str:
     char_info_1 = Image.open(TEXT_PATH / 'char_info_1.png')
     char_imfo_mask = Image.open(TEXT_PATH / 'char_info_mask.png')
 
-    based_w, based_h = 320, 1024
+    #based_w, based_h = 320, 1024
+    based_w, based_h = 600, 1200
     if charUrl:
         char_img = Image.open(BytesIO(get(charUrl).content)).convert('RGBA')
     else:
@@ -75,9 +76,9 @@ async def draw_char_card(raw_data: dict, charUrl: str = None) -> str:
     else:
         pass
     
-    img_temp = Image.new('RGBA', (320, 1024), (0,0,0,0))
+    img_temp = Image.new('RGBA', (based_w, based_h), (0,0,0,0))
     img_temp.paste(char_img,(0,0),char_imfo_mask)
-    img.paste(img_temp, (41, 29), img_temp)
+    img.paste(img_temp, (0, 0), img_temp)
     img.paste(char_info_1, (0, 0), char_info_1)
 
     #holo_img = Image.open(TEXT_PATH / 'icon_holo.png')
