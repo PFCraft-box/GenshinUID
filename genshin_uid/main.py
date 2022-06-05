@@ -382,7 +382,10 @@ async def send_guide_pic(bot: Bot, event: MessageEvent):
                         name = i
         #name = str(event.get_message()).strip().replace(' ', '')[:-2]
         url = 'https://img.genshin.minigg.cn/guide/{}.jpg'.format(name)
-        await get_guide_pic.send(MessageSegment.image(url))
+        if httpx.head(url).status_code == 200:
+            await get_guide_pic.send(MessageSegment.image(url))
+        else:
+            return
     except Exception:
         logger.exception('获取建议失败。')
 
