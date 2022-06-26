@@ -90,6 +90,12 @@ FILE_PATH = os.path.join(
 INDEX_PATH = os.path.join(FILE_PATH, 'index')
 TEXTURE_PATH = os.path.join(FILE_PATH, 'texture2d')
 
+
+CK_HINT = '''获取Cookies教程：https://github.com/KimigaiiWuyi/GenshinUID/issues/255
+绑定uid：uid为原神uid，如绑定uid12345
+绑定mys：mys为米游社通行证，如绑定mys12345'''
+
+
 # https://v2.nonebot.dev/docs/advanced/di/dependency-injection#class-%E4%BD%9C%E4%B8%BA%E4%BE%9D%E8%B5%96
 class ImageAndAt:
     def __init__(self, event: MessageEvent):
@@ -825,7 +831,7 @@ async def send_genshin_info(bot: Bot, event: MessageEvent):
         await get_genshin_info.send('机器人发送消息失败：{}'.format(e.info['wording']))
         logger.exception('发送每月统计信息失败')
     except Exception:
-        await get_genshin_info.send('未找到绑定信息', at_sender=True)
+        await get_genshin_info.send('未找到绑定信息\n' + CK_HINT, at_sender=True)
         logger.exception('获取/发送每月统计失败')
 
 
@@ -842,7 +848,7 @@ async def send_monthly_data(bot: Bot, event: MessageEvent):
         await monthly_data.send('机器人发送消息失败：{}'.format(e.info['wording']))
         logger.exception('发送每月统计信息失败')
     except Exception:
-        await monthly_data.send('未找到绑定信息', at_sender=True)
+        await monthly_data.send('未找到绑定信息\n' + CK_HINT, at_sender=True)
         logger.exception('获取/发送每月统计失败')
 
 
@@ -856,7 +862,7 @@ async def get_sing_func(bot: Bot, event: MessageEvent):
         uid = uid[0]
         im = await sign(uid)
     except TypeError:
-        im = '没有找到绑定信息。'
+        im = '没有找到绑定信息。\n' + CK_HINT
     except Exception as e:
         im = '发生错误 {},请检查后台输出。'.format(e)
         logger.exception('签到失败')
@@ -877,7 +883,7 @@ async def send_mihoyo_coin(bot: Bot, event: MessageEvent):
         im_mes = await mihoyo_coin(qid)
         im = im_mes
     except TypeError or AttributeError:
-        im = '没有找到绑定信息。'
+        im = '没有找到绑定信息。\n' + CK_HINT
         logger.exception('获取米游币失败')
     except Exception as e:
         im = '发生错误 {},请检查后台输出。'.format(e)
@@ -927,7 +933,7 @@ async def send_daily_data(bot: Bot, event: MessageEvent):
         im = mes[0]['message']
         await daily_data.send(im, at_sender=True)
     except TypeError:
-        im = '没有找到绑定信息。'
+        im = '没有找到绑定信息。\n' + CK_HINT
         await daily_data.send(im, at_sender=True)
     except ActionFailed as e:
         await daily_data.send('机器人发送消息失败：{}'.format(e.info['wording']))
@@ -1289,7 +1295,7 @@ async def get_info(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent
                 except Exception:
                     logger.exception('获取信息失败,你可以使用强制刷新命令进行刷新。')
         else:
-            await search.send('未找到绑定记录！')
+            await search.send('未找到绑定记录！\n' + CK_HINT)
     except Exception as e:
         await search.send('发生错误 {},请检查后台输出。'.format(e))
         logger.exception('查询异常')
