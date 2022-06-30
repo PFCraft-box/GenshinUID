@@ -1052,7 +1052,8 @@ async def send_uid_info(bot: Bot, event: Union[GroupMessageEvent, PrivateMessage
                             for k in char_data[i]:
                                 if char_name in k:
                                     char_name = i
-
+                    if '旅行者' in char_name:
+                        char_name = '旅行者'
                     with open(R_PATH / 'enkaToData' / 'player' / str(uid) / f'{char_name}.json',
                             'r',
                             encoding='utf8') as fp:
@@ -1282,7 +1283,8 @@ async def get_info(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent
                                 for k in char_data[i]:
                                     if char_name in k:
                                         char_name = i
-
+                        if '旅行者' in char_name:
+                            char_name = '旅行者'
                         with open(R_PATH / 'enkaToData' / 'player' / str(uid) / f'{char_name}.json',
                                 'r',
                                 encoding='utf8') as fp:
