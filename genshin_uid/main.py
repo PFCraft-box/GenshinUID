@@ -938,7 +938,7 @@ async def check_cookies(bot: Bot):
 @check_stoken.handle()
 async def check_stoken(bot: Bot):
     try:
-        raw_mes = await check_dbcheck_stoken_db()
+        raw_mes = await check_stoken_db()
         im = raw_mes[0]
         await check.send(im)
         for i in raw_mes[1]:
