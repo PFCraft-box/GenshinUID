@@ -1,5 +1,8 @@
 import math
-import json,asyncio
+import json
+import asyncio
+import os
+import sys
 from io import BytesIO
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -7,7 +10,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageChops
 from httpx import get
 from nonebot import logger
 
-from .dmgCalc.dmgCalc import *
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from dmgCalc.dmgCalc import *
 
 R_PATH = Path(__file__).parents[0]
 TEXT_PATH = R_PATH / 'texture2D'
