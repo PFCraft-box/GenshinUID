@@ -29,11 +29,11 @@ bind = on_regex(
 
 @bind_info.handle()
 async def send_bind_card(
-    event: MessageEvent,
-    matcher: Matcher,
+        event: MessageEvent,
+        matcher: Matcher,
 ):
     logger.info('开始执行[查询用户绑定状态]')
-    qid = event.get_user_id
+    qid = event.chat.id
     if qid is None:
         await matcher.finish('QID为空，请重试！')
     im = await get_user_card(qid)
@@ -44,7 +44,7 @@ async def send_bind_card(
 @add_cookie.handle()
 @handle_exception('Cookie', '校验失败！请输入正确的Cookies！')
 async def send_add_ck_msg(
-    event: MessageEvent, matcher: Matcher, args: Message = CommandArg()
+        event: MessageEvent, matcher: Matcher, args: Message = CommandArg()
 ):
     mes = args.extract_plain_text().strip().replace(' ', '')
     im = await deal_ck(mes, int(event.chat.id))  # type: ignore
@@ -55,11 +55,11 @@ async def send_add_ck_msg(
 @bind.handle()
 @handle_exception('绑定ID', '绑定ID异常')
 async def send_link_uid_msg(
-    event: MessageEvent, matcher: Matcher, args: Tuple[Any, ...] = RegexGroup()
+        event: MessageEvent, matcher: Matcher, args: Tuple[Any, ...] = RegexGroup()
 ):
     logger.info('开始执行[绑定/解绑用户信息]')
     logger.info('[绑定/解绑]参数: {}'.format(args))
-    qid = event.get_user_id
+    qid = event.chat.id
     if qid is None:
         await matcher.finish('QID为空，请重试！')
     logger.info('[绑定/解绑]UserID: {}'.format(qid))
