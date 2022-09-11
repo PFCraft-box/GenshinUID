@@ -95,7 +95,7 @@ async def send_char_info(
     if at:
         qid = at
     else:
-        qid = event.get_user_id
+        qid = event.chat.id
     logger.info('[查询角色面板]QQ: {}'.format(qid))
 
     # 获取uid

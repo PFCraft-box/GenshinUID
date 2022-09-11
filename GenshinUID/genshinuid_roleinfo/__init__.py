@@ -33,7 +33,7 @@ async def send_role_info(
     args: Tuple[Any, ...] = RegexGroup(),
     custom: ImageAndAt = Depends(),
 ):
-    qid = event.get_user_id
+    qid = event.chat.id
     at = custom.get_first_at()
     if at:
         qid = at
