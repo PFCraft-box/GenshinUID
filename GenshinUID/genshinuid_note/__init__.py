@@ -28,4 +28,4 @@ async def send_monthly_data(
     else:
         await matcher.finish('发生未知错误...')
     im = await award(uid)
-    await matcher.finish(im, at_sender=True)
+    await matcher.finish(im)

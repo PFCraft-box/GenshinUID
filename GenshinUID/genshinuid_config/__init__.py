@@ -69,7 +69,7 @@ async def send_config_msg(
     if at and await SUPERUSER(bot, event):
         qid = at
     elif at and at != qid:
-        await matcher.finish('你没有权限操作别人的状态噢~', at_sender=True)
+        await matcher.finish('你没有权限操作别人的状态噢~')
     logger.info('[设置阈值信息]qid: {}'.format(qid))
 
     try:
@@ -82,12 +82,12 @@ async def send_config_msg(
         try:
             value = int(args[5])
         except ValueError:
-            await matcher.finish('请输入数字哦~', at_sender=True)
+            await matcher.finish('请输入数字哦~')
     else:
-        await matcher.finish('请输入正确的阈值数字!', at_sender=True)
+        await matcher.finish('请输入正确的阈值数字!')
     logger.info('[设置阈值信息]func: {}, value: {}'.format(func, value))
     im = await set_push_value(func, str(uid), value)
-    await matcher.finish(im, at_sender=True)
+    await matcher.finish(im)
 
 
 # 开启 自动签到 和 推送树脂提醒 功能
@@ -121,7 +121,7 @@ async def open_switch_func(
     if at and is_admin:
         qid = at
     elif at and at != qid:
-        await matcher.finish('你没有权限操作别人的状态噢~', at_sender=True)
+        await matcher.finish('你没有权限操作别人的状态噢~')
 
     try:
         uid = await select_db(qid, mode='uid')
@@ -136,4 +136,4 @@ async def open_switch_func(
         query=query,
         is_admin=is_admin,
     )
-    await matcher.finish(im, at_sender=True)
+    await matcher.finish(im)

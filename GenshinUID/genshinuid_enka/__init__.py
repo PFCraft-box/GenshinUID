@@ -122,7 +122,7 @@ async def send_char_info(
             if '\u4e00' <= file_name[0] <= '\u9fff':
                 char_list.append(file_name.split('.')[0])
         char_list_str = ','.join(char_list)
-        await matcher.finish(f'UID{uid}当前缓存角色:{char_list_str}', at_sender=True)
+        await matcher.finish(f'UID{uid}当前缓存角色:{char_list_str}')
     else:
         if '旅行者' in char_name:
             char_name = '旅行者'
@@ -133,7 +133,7 @@ async def send_char_info(
             with open(char_path, 'r', encoding='utf8') as fp:
                 char_data = json.load(fp)
         else:
-            await matcher.finish(CHAR_HINT.format(char_name), at_sender=True)
+            await matcher.finish(CHAR_HINT.format(char_name))
 
     im = await draw_char_img(char_data, img)
 

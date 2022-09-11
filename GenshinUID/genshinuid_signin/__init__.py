@@ -41,7 +41,7 @@ async def get_sign_func(
     uid = await select_db(qid, mode='uid')
     logger.info('[签到]UID: {}'.format(uid))
     im = await sign_in(uid)
-    await matcher.finish(im, at_sender=True)
+    await matcher.finish(im)
 
 
 @all_recheck.handle()

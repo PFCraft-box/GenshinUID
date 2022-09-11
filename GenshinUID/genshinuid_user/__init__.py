@@ -79,4 +79,4 @@ async def send_link_uid_msg(
             im = await delete_db(qid, {'UID': args[2]})
         else:
             im = await delete_db(qid, {'MYSID': args[2]})
-    await matcher.finish(im, at_sender=True)
+    await matcher.finish(im)
