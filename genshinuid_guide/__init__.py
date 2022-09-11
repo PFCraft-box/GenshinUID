@@ -16,7 +16,7 @@ async def send_guide_pic(bot: HoshinoBot, ev: CQEvent):
     name = await alias_to_char_name(name)
     if name.startswith('旅行者'):
         name = f'{name[:3]}-{name[-1]}'
-    url = 'https://img.genshin.minigg.cn/guide/{}.jpg'.format(name)
+    url = 'https://file.microgg.cn/MiniGG/guide/{}.jpg'.format(name)
     if httpx.head(url).status_code == 200:
         logger.info('获得{}推荐图片成功！'.format(name))
         await bot.send(ev, MessageSegment.image(url))
