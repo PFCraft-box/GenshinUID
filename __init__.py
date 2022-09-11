@@ -62,4 +62,4 @@ def copy_and_delete_files():
 
 
 copy_and_delete_files()
-load_plugins(str(dir_ / "GenshinUID"))
+load_plugins(str(dir_ / "GenshinUID"), 'GenshinUID')
