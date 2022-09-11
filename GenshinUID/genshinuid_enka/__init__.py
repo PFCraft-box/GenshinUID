@@ -203,7 +203,7 @@ async def send_card_info(
     message = args.extract_plain_text().strip().replace(' ', '')
     uid = re.findall(r'\d+', message)  # str
     m = ''.join(re.findall('[\u4e00-\u9fa5]', message))
-    qid = int(event.sender.user_id)  # type: ignore
+    qid = int(event.chat.id)  # type: ignore
 
     if len(uid) >= 1:
         uid = uid[0]
@@ -262,7 +262,7 @@ async def send_charcard_list(
         message = message.replace(str(at), '')
     else:
         uid = await select_db(
-            int(event.sender.user_id), mode='uid'  # type: ignore
+            int(event.chat.id), mode='uid'  # type: ignore
         )
     im = await draw_cahrcard_list(str(uid), limit)
 
