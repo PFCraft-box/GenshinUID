@@ -4,7 +4,7 @@ from typing import Optional
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.exception import FinishedException
-from nonebot.adapters.onebot.v11 import ActionFailed
+from nonebot.adapters.telegram.exception import ActionFailed
 
 
 def handle_exception(

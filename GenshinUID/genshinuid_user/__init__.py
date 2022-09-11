@@ -47,7 +47,7 @@ async def send_add_ck_msg(
     event: MessageEvent, matcher: Matcher, args: Message = CommandArg()
 ):
     mes = args.extract_plain_text().strip().replace(' ', '')
-    im = await deal_ck(mes, int(event.sender.user_id))  # type: ignore
+    im = await deal_ck(mes, int(event.chat.id))  # type: ignore
     await matcher.finish(File.photo(im))
 
 
