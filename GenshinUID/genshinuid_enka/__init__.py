@@ -10,9 +10,9 @@ from ..utils.enka_api.enka_to_data import enka_to_data
 from ..utils.db_operation.db_operation import get_all_uid
 from ..utils.message.error_reply import *  # noqa: F401,F403
 from ..utils.alias.alias_to_char_name import alias_to_char_name
+from ..utils.download_resource.RESOURCE_PATH import PLAYER_PATH
 
 AUTO_REFRESH = False
-PLAYER_PATH = Path(__file__).parents[1] / 'player'
 
 
 @sv.on_fullmatch('切换api')
