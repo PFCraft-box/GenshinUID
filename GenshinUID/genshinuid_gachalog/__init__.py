@@ -3,9 +3,9 @@ from typing import Union
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot import get_bot, on_notice, on_command
-from nonebot.adapters.onebot.v11 import (
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import (
     NoticeEvent,
-    MessageSegment,
     GroupMessageEvent,
     PrivateMessageEvent,
 )
@@ -33,8 +33,8 @@ async def export_gacha_log_info(
 ):
 
     logger.info('开始执行[导出抽卡记录]')
-    qid = event.user_id
-    gid = event.group_id
+    qid = event.get_user_id
+    gid = event.chat.id
     uid = await select_db(qid, mode='uid')
     bot = get_bot()
     if not isinstance(uid, str) or '未找到绑定的UID' in uid:
@@ -93,11 +93,11 @@ async def send_gacha_log_card_info(
 ):
     logger.info('开始执行[抽卡记录]')
 
-    uid = await select_db(event.user_id, mode='uid')
+    uid = await select_db(event.get_user_id, mode='uid')
     if isinstance(uid, str):
         im = await draw_gachalogs_img(uid)
         if isinstance(im, bytes):
-            await matcher.finish(MessageSegment.image(im))
+            await matcher.finish(File.photo(im))
         else:
             await matcher.finish(im)
     else:
@@ -123,7 +123,7 @@ async def send_daily_info(
     matcher: Matcher,
 ):
     logger.info('开始执行[刷新抽卡记录]')
-    uid = await select_db(event.user_id, mode='uid')
+    uid = await select_db(event.get_user_id, mode='uid')
     if isinstance(uid, str):
         im = await save_gachalogs(uid)
         await matcher.finish(im)

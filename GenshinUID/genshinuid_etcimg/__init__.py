@@ -5,7 +5,8 @@ from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot import on_regex, on_command
 from nonebot.params import CommandArg, RegexGroup
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.telegram import Message
+from nonebot.adapters.telegram.message import File
 
 from ..genshinuid_meta import register_menu
 from ..utils.exception.handle_exception import handle_exception
@@ -48,7 +49,7 @@ async def send_primogems_data(matcher: Matcher, args: Message = CommandArg()):
         img = f'{version[0]}.png'
     primogems_img = PRIMOGEMS_DATA_PATH / img
     logger.info('[图片][版本规划]访问图片: {}'.format(img))
-    await matcher.finish(MessageSegment.image(primogems_img))
+    await matcher.finish(File.photo(primogems_img))
 
 
 @get_img_data.handle()
@@ -80,6 +81,6 @@ async def send_img_data(
     logger.info('[图片][杂图]参数: {}'.format(args))
     img = IMG_PATH / f'{args[1]}.jpg'
     if img.exists():
-        await matcher.finish(MessageSegment.image(img))
+        await matcher.finish(File.photo(img))
     else:
         return

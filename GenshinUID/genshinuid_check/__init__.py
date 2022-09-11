@@ -3,7 +3,7 @@ import asyncio
 
 from nonebot.matcher import Matcher
 from nonebot import require, on_command
-from nonebot.adapters.onebot.v11 import Bot
+from nonebot.adapters.telegram import Bot
 
 from .backup_data import data_backup
 from ..genshinuid_meta import register_menu

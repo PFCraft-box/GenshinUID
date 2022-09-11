@@ -6,9 +6,9 @@ from nonebot.matcher import Matcher
 from nonebot.params import RegexDict
 from nonebot import on_regex, on_command
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    MessageSegment,
+from nonebot.adapters.telegram import Bot
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )
@@ -92,7 +92,7 @@ async def send_find_map_msg(
     resource_temp_path = MAP_DATA / f'{MAP_ID_LIST[0].name}_{name}.jpg'
     if resource_temp_path.exists():
         logger.info(f'本地已有{MAP_ID_LIST[0].name}_{name}的资源点,直接发送...')
-        await matcher.finish(MessageSegment.image(resource_temp_path))
+        await matcher.finish(File.photo(resource_temp_path))
     else:
         await matcher.send(
             (
@@ -105,6 +105,6 @@ async def send_find_map_msg(
     if isinstance(im, str):
         await matcher.finish(im)
     elif isinstance(im, bytes):
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         await matcher.finish('查找失败!')

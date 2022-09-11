@@ -6,7 +6,7 @@ from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot import on_regex, on_command
 from nonebot.params import CommandArg, RegexGroup
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.telegram.message import Message, File
 
 from ..genshinuid_meta import register_menu
 from ..utils.alias.alias_to_char_name import alias_to_char_name
@@ -45,7 +45,7 @@ async def send_guide_pic(
     url = 'https://file.microgg.cn/MiniGG/guide/{}.jpg'.format(name)
     if httpx.head(url).status_code == 200:
         logger.info('获得{}推荐图片成功！'.format(name))
-        await matcher.finish(MessageSegment.image(url))
+        await matcher.finish(File.photo(url))
     else:
         logger.warning('未获得{}推荐图片。'.format(name))
 
@@ -76,7 +76,7 @@ async def send_bluekun_pic(matcher: Matcher, args: Message = CommandArg()):
     img = IMG_PATH / '{}.jpg'.format(name)
     if img.exists():
         with open(img, 'rb') as f:
-            im = MessageSegment.image(f.read())
+            im = File.photo(f.read())
         logger.info('获得{}参考面板图片成功！'.format(name))
         await matcher.finish(im)
     else:

@@ -5,8 +5,8 @@ from nonebot.log import logger
 from nonebot.params import Depends
 from nonebot.matcher import Matcher
 from nonebot import get_bot, require, on_command
-from nonebot.adapters.onebot.v11 import (
-    MessageSegment,
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )
@@ -40,10 +40,10 @@ async def send_daily_info(
     logger.info('开始执行[每日信息文字版]')
 
     at = custom.get_first_at()
-    qid = event.user_id
+    qid = event.get_user_id
     if at:
         qid = at
-    logger.info('[每日信息文字版]QQ号: {}'.format(qid))
+    logger.info('[每日信息文字版]TGID: {}'.format(qid))
 
     uid: str = await select_db(qid, mode='uid')  # type: ignore
     logger.info('[每日信息文字版]UID: {}'.format(uid))
@@ -96,7 +96,7 @@ async def send_uid_info(
     logger.info('开始执行[每日信息]')
 
     at = custom.get_first_at()
-    qid = event.user_id
+    qid = event.get_user_id
     if at:
         qid = at
     logger.info('[每日信息]QQ号: {}'.format(qid))
@@ -105,6 +105,6 @@ async def send_uid_info(
     if isinstance(im, str):
         await matcher.finish(im)
     elif isinstance(im, bytes):
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         await matcher.finish('发生了未知错误,请联系管理员检查后台输出!')

@@ -4,7 +4,8 @@ from typing import Any, Tuple
 from nonebot import on_regex
 from nonebot.matcher import Matcher
 from nonebot.params import RegexGroup
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.telegram.event import GroupMessageEvent
+from nonebot.adapters.telegram import Bot
 
 from ..config import priority
 from .get_mys_data import get_region_task, get_task_detail
@@ -18,16 +19,16 @@ get_task_adv = on_regex(
 @get_task_adv.handle()
 @handle_exception('任务攻略')
 async def send_task_adv(
-    bot: Bot,
-    event: GroupMessageEvent,
-    matcher: Matcher,
-    args: Tuple[Any, ...] = RegexGroup(),
+        bot: Bot,
+        event: GroupMessageEvent,
+        matcher: Matcher,
+        args: Tuple[Any, ...] = RegexGroup(),
 ):
     if str(args[2]) in ['须弥', '层岩', '海岛']:
         im = await get_region_task(str(args[2]))
         for i in im:
             await bot.call_api(
-                'send_group_forward_msg', group_id=event.group_id, messages=i
+                'send_group_forward_msg', group_id=event.chat.id, messages=i
             )
             await asyncio.sleep(1)
         await matcher.finish()

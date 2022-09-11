@@ -54,3 +54,7 @@ extra_standard_library = ["typing_extensions"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[[tool.poetry.source]]
+name = 'tsinghua.mirrors'
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"

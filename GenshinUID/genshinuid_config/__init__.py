@@ -5,12 +5,14 @@ from nonebot.matcher import Matcher
 from nonebot import on_regex, on_command
 from nonebot.permission import SUPERUSER
 from nonebot.params import Depends, CommandArg, RegexGroup
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    Message,
-    MessageSegment,
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import (
     GroupMessageEvent,
     PrivateMessageEvent,
+)
+from nonebot.adapters.telegram import (
+    Bot,
+    Message,
 )
 
 from .draw_config_card import draw_config_img
@@ -45,7 +47,7 @@ async def send_config_card(matcher: Matcher, args: Message = CommandArg()):
     if isinstance(im, str):
         await matcher.finish(im)
     elif isinstance(im, bytes):
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         await matcher.finish('发生了未知错误,请联系管理员检查后台输出!')
 
@@ -53,15 +55,15 @@ async def send_config_card(matcher: Matcher, args: Message = CommandArg()):
 @push_config.handle()
 @handle_exception('设置推送服务')
 async def send_config_msg(
-    bot: Bot,
-    event: Union[GroupMessageEvent, PrivateMessageEvent],
-    matcher: Matcher,
-    args: Tuple[Any, ...] = RegexGroup(),
-    custom: ImageAndAt = Depends(),
+        bot: Bot,
+        event: Union[GroupMessageEvent, PrivateMessageEvent],
+        matcher: Matcher,
+        args: Tuple[Any, ...] = RegexGroup(),
+        custom: ImageAndAt = Depends(),
 ):
     logger.info('开始执行[设置阈值信息]')
     logger.info('[设置阈值信息]参数: {}'.format(args))
-    qid = event.sender.user_id
+    qid = event.get_user_id
     at = custom.get_first_at()
 
     if at and await SUPERUSER(bot, event):
@@ -91,13 +93,13 @@ async def send_config_msg(
 # 开启 自动签到 和 推送树脂提醒 功能
 @open_and_close_switch.handle()
 async def open_switch_func(
-    bot: Bot,
-    event: Union[GroupMessageEvent, PrivateMessageEvent],
-    matcher: Matcher,
-    args: Tuple[Any, ...] = RegexGroup(),
-    at: ImageAndAt = Depends(),
+        bot: Bot,
+        event: Union[GroupMessageEvent, PrivateMessageEvent],
+        matcher: Matcher,
+        args: Tuple[Any, ...] = RegexGroup(),
+        at: ImageAndAt = Depends(),
 ):
-    qid = event.sender.user_id
+    qid = event.get_user_id
     if at:
         at = at.get_first_at()  # type: ignore
 

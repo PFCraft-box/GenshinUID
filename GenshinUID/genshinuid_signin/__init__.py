@@ -5,7 +5,7 @@ from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
 from nonebot import get_bot, require, on_command
-from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.adapters.telegram.event import MessageEvent
 
 from ..config import priority
 from .sign import sign_in, daily_sign

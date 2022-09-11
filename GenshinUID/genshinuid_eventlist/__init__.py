@@ -1,7 +1,6 @@
 from nonebot.matcher import Matcher
 from nonebot import require, on_command
-from nonebot.adapters.onebot.v11 import MessageSegment
-
+from nonebot.adapters.telegram.message import File
 from ..config import priority
 from ..genshinuid_meta import register_menu
 from ..utils.nonebot2.rule import FullCommand
@@ -29,7 +28,7 @@ async def send_events(matcher: Matcher):
     while True:
         if IMG_PATH.exists():
             with open(IMG_PATH, 'rb') as f:
-                im = MessageSegment.image(f.read())
+                im = File.photo(f.read())
             break
         else:
             await save_draw_event_img()

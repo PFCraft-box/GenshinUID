@@ -4,8 +4,8 @@ from nonebot import on_regex
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import Depends, RegexGroup
-from nonebot.adapters.onebot.v11 import (
-    MessageSegment,
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )
@@ -34,34 +34,34 @@ get_abyss_info = on_regex(
     '查询(@某人)(上期)深渊(xx层)',
     '查询你的或者指定人的深渊战绩',
     detail_des=(
-        '指令：'
-        '<ft color=(238,120,0)>[查询</ft>'
-        '<ft color=(125,125,125)>(@某人)</ft>'
-        '<ft color=(238,120,0)>/uidxxx/mysxxx]</ft>'
-        '<ft color=(125,125,125)>(上期)</ft>'
-        '<ft color=(238,120,0)>深渊</ft>'
-        '<ft color=(125,125,125)>(xx层)</ft>\n'
-        ' \n'  # 如果想要空行，请在换行符前面打个空格，不然会忽略换行符
-        '可以用来查看你的或者指定人的深渊战绩，可以指定层数，默认为最高层数\n'
-        '可以在命令文本后带一张图以自定义背景图\n'
-        ' \n'
-        '示例：\n'
-        '<ft color=(238,120,0)>查询深渊</ft>；\n'
-        '<ft color=(238,120,0)>uid123456789上期深渊</ft>；\n'
-        '<ft color=(238,120,0)>查询</ft><ft color=(0,148,200)>@无疑Wuyi</ft> '
-        '<ft color=(238,120,0)>上期深渊12层</ft>'
+            '指令：'
+            '<ft color=(238,120,0)>[查询</ft>'
+            '<ft color=(125,125,125)>(@某人)</ft>'
+            '<ft color=(238,120,0)>/uidxxx/mysxxx]</ft>'
+            '<ft color=(125,125,125)>(上期)</ft>'
+            '<ft color=(238,120,0)>深渊</ft>'
+            '<ft color=(125,125,125)>(xx层)</ft>\n'
+            ' \n'  # 如果想要空行，请在换行符前面打个空格，不然会忽略换行符
+            '可以用来查看你的或者指定人的深渊战绩，可以指定层数，默认为最高层数\n'
+            '可以在命令文本后带一张图以自定义背景图\n'
+            ' \n'
+            '示例：\n'
+            '<ft color=(238,120,0)>查询深渊</ft>；\n'
+            '<ft color=(238,120,0)>uid123456789上期深渊</ft>；\n'
+            '<ft color=(238,120,0)>查询</ft><ft color=(0,148,200)>@无疑Wuyi</ft> '
+            '<ft color=(238,120,0)>上期深渊12层</ft>'
     ),
 )
 async def send_abyss_info(
-    event: Union[GroupMessageEvent, PrivateMessageEvent],
-    matcher: Matcher,
-    args: Tuple[Any, ...] = RegexGroup(),
-    custom: ImageAndAt = Depends(),
+        event: Union[GroupMessageEvent, PrivateMessageEvent],
+        matcher: Matcher,
+        args: Tuple[Any, ...] = RegexGroup(),
+        custom: ImageAndAt = Depends(),
 ):
     logger.info('开始执行[查询深渊信息]')
     logger.info(f'[查询深渊信息]参数: {args}')
     at = custom.get_first_at()
-    qid = at or event.user_id
+    qid = at or event.get_user_id
     if args[2] == 'mys':
         uid = await convert_mysid(args[3])
     elif args[3] is None:
@@ -94,6 +94,6 @@ async def send_abyss_info(
     if isinstance(im, str):
         await matcher.finish(im)
     elif isinstance(im, bytes):
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         await matcher.finish('发生了未知错误,请联系管理员检查后台输出!')

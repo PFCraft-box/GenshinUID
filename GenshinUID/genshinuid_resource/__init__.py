@@ -6,8 +6,8 @@ from nonebot import on_command
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import (
-    Bot,
+from nonebot.adapters.telegram import Bot
+from nonebot.adapters.telegram.event import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )

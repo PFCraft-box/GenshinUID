@@ -4,10 +4,10 @@ from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot import on_regex, on_command
 from nonebot.params import CommandArg, RegexGroup
-from nonebot.adapters.onebot.v11 import (
-    PRIVATE_FRIEND,
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import MessageEvent
+from nonebot.adapters.telegram import (
     Message,
-    MessageEvent,
     MessageSegment,
 )
 
@@ -18,7 +18,7 @@ from ..utils.nonebot2.rule import FullCommand
 from ..utils.exception.handle_exception import handle_exception
 from ..utils.db_operation.db_operation import bind_db, delete_db, switch_db
 
-add_cookie = on_command('添加', permission=PRIVATE_FRIEND)
+add_cookie = on_command('添加')
 bind_info = on_command(
     '绑定信息', priority=priority, block=True, rule=FullCommand()
 )
@@ -33,12 +33,12 @@ async def send_bind_card(
     matcher: Matcher,
 ):
     logger.info('开始执行[查询用户绑定状态]')
-    qid = event.sender.user_id
+    qid = event.get_user_id
     if qid is None:
         await matcher.finish('QID为空，请重试！')
     im = await get_user_card(qid)
     logger.info('[查询用户绑定状态]完成!等待图片发送中...')
-    await matcher.finish(MessageSegment.image(im))
+    await matcher.finish(File.photo(im))
 
 
 @add_cookie.handle()
@@ -48,7 +48,7 @@ async def send_add_ck_msg(
 ):
     mes = args.extract_plain_text().strip().replace(' ', '')
     im = await deal_ck(mes, int(event.sender.user_id))  # type: ignore
-    await matcher.finish(MessageSegment.image(im))
+    await matcher.finish(File.photo(im))
 
 
 # 群聊内 绑定uid或者mysid 的命令，会绑定至当前qq号上
@@ -59,7 +59,7 @@ async def send_link_uid_msg(
 ):
     logger.info('开始执行[绑定/解绑用户信息]')
     logger.info('[绑定/解绑]参数: {}'.format(args))
-    qid = event.sender.user_id
+    qid = event.get_user_id
     if qid is None:
         await matcher.finish('QID为空，请重试！')
     logger.info('[绑定/解绑]UserID: {}'.format(qid))

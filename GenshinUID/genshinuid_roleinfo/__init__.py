@@ -4,8 +4,8 @@ from nonebot import on_regex
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import Depends, RegexGroup
-from nonebot.adapters.onebot.v11 import (
-    MessageSegment,
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )
@@ -33,7 +33,7 @@ async def send_role_info(
     args: Tuple[Any, ...] = RegexGroup(),
     custom: ImageAndAt = Depends(),
 ):
-    qid = event.user_id
+    qid = event.get_user_id
     at = custom.get_first_at()
     if at:
         qid = at
@@ -63,6 +63,6 @@ async def send_role_info(
     if isinstance(im, str):
         await matcher.finish(im)
     elif isinstance(im, bytes):
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         await matcher.finish('发生了未知错误,请联系管理员检查后台输出!')

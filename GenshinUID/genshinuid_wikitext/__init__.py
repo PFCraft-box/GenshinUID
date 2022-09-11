@@ -3,11 +3,12 @@ import re
 from nonebot import on_command
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import (
+from nonebot.adapters.telegram.event import GroupMessageEvent
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram import (
     Bot,
     Message,
     MessageSegment,
-    GroupMessageEvent,
 )
 
 from ..config import priority
@@ -39,12 +40,12 @@ async def send_audio(matcher: Matcher, args: Message = CommandArg()):
     name = ''.join(re.findall('[\u4e00-\u9fa5]', message))
     im = await audio_wiki(name, message)
     if name == '列表':
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         if isinstance(im, str):
             await matcher.finish(im)
         else:
-            await matcher.finish(MessageSegment.record(im))
+            await matcher.finish(File.voice(im))
 
 
 @get_enemies.handle()
@@ -99,7 +100,7 @@ async def send_talents(
         im = await char_wiki(name, 'talents', num[0])
         if isinstance(im, list):
             await bot.call_api(
-                'send_group_forward_msg', group_id=event.group_id, messages=im
+                'send_group_forward_msg', group_id=event.chat.id, messages=im
             )
             await matcher.finish()
             return

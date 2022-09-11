@@ -1,6 +1,6 @@
 from nonebot import on_command
 from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.adapters.telegram.event import MessageEvent
 
 from .note_text import award
 from ..config import priority
@@ -20,7 +20,7 @@ async def send_monthly_data(
     event: MessageEvent,
     matcher: Matcher,
 ):
-    qid = event.sender.user_id
+    qid = event.get_user_id
     uid = await select_db(qid, mode='uid')
     if isinstance(uid, str):
         if '未找到绑定的UID' in uid:

@@ -9,14 +9,15 @@ from nonebot.matcher import Matcher
 from nonebot import require, on_command
 from nonebot.permission import SUPERUSER
 from nonebot.params import Depends, CommandArg
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    Message,
-    MessageSegment,
+from nonebot.adapters.telegram.message import File
+from nonebot.adapters.telegram.event import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )
-
+from nonebot.adapters.telegram import (
+    Bot,
+    Message,
+)
 from ..config import priority
 from ..genshinuid_meta import register_menu
 from ..utils.enka_api.get_enka_data import switch_api
@@ -94,7 +95,7 @@ async def send_char_info(
     if at:
         qid = at
     else:
-        qid = event.user_id
+        qid = event.get_user_id
     logger.info('[查询角色面板]QQ: {}'.format(qid))
 
     # 获取uid
@@ -139,7 +140,7 @@ async def send_char_info(
     if isinstance(im, str):
         await matcher.finish(im)
     elif isinstance(im, bytes):
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         await matcher.finish('发生了未知错误,请联系管理员检查后台输出!')
 
@@ -267,6 +268,6 @@ async def send_charcard_list(
 
     logger.info(f'UID{uid}获取角色数据成功！')
     if isinstance(im, bytes):
-        await matcher.finish(MessageSegment.image(im))
+        await matcher.finish(File.photo(im))
     else:
         await matcher.finish(str(im))
