@@ -37,7 +37,7 @@ def copy_and_delete_files():
                     dst,
                     dirs_exist_ok=True,
                 )
-                logger.success(f"复制文件夹 {path} -> {dst} 成功")
+                logger.info(f"复制文件夹 {path} -> {dst} 成功")
             except shutil.Error as e:
                 failed_src: List[Path] = []
                 exc: str
@@ -56,7 +56,7 @@ def copy_and_delete_files():
             else:
                 try:
                     shutil.rmtree(path)
-                    logger.success(f"删除文件夹 {path} 成功")
+                    logger.info(f"删除文件夹 {path} 成功")
                 except OSError as e:
                     logger.warning(f"删除文件夹 {path} 失败：{e.strerror}")
 
